@@ -6,7 +6,7 @@
 
 using namespace std;
 
-//Struct used for comparison (numbers order for reference)
+//Struct used for comparison (numbers order by reference)
 struct {
     bool operator()(char a, char b) const { 
         string numbers = {"23456789TJQKA"};
@@ -32,7 +32,7 @@ public:
 
         //Sort hand
         handSorted = {hnd[0], hnd[3], hnd[6], hnd[9], hnd[12]};
-        std::sort(handSorted.begin(), handSorted.end(), comparator);
+        sort(handSorted.begin(), handSorted.end(), comparator);
 
         //Check class
         handClass = checkHand();
@@ -82,8 +82,8 @@ public:
     {
         string numbers = {"23456789TJQKA"};
         //If is substring
-        std::size_t found = numbers.find(handSorted);
-        if (found != std::string::npos)
+        size_t found = numbers.find(handSorted);
+        if (found != string::npos)
         {
             cardsInGame = handSorted;
             higherCardInGame = cardsInGame.back();
@@ -182,7 +182,7 @@ public:
     {
         for (int i = 0; i < handSorted.length(); i++)
         {
-            if(!(cardsInGame.find(handSorted[i]) != std::string::npos))
+            if(!(cardsInGame.find(handSorted[i]) != string::npos))
             {
                 cardsOutGame += handSorted[i];
             }

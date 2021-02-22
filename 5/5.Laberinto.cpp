@@ -49,10 +49,10 @@ void initialize(Cell level[n][n])
     for(int i=1; i<n-1; i++) 
     {
         for(int j=1; j<n-1; j++) {
-            level[1][j].top = false;
-            level[n-2][j].bottom = false;
-            level[i][1].left = false;
-            level[i][n-2].right = false;
+            level[1][j].left = false;
+            level[n-2][j].right = false;
+            level[i][1].top = false;
+            level[i][n-2].bottom = false;
         }
     }
 }
@@ -61,11 +61,11 @@ void showMaze(Cell level[n][n])
 {
     system("CLS");
 
-    for (int i = 0; i < n; i++)
+    for (int y = 0; y < n; y++)
     {
-        for (int j = 0; j < n; j++)
+        for (int x = 0; x < n; x++)
         {
-            cout << " " << level[i][j].character;
+            cout << " " << level[x][y].character;
         }
         cout << endl;
     }
@@ -74,34 +74,39 @@ void showMaze(Cell level[n][n])
 vector<int> checkNeighbours(Cell level[n][n], stack<pair<int, int>> &backtrackStack)
 {
     vector<int> neighbours;
-    if((backtrackStack.top().second > 1) && 
-        (level[(backtrackStack.top().second - 2)][(backtrackStack.top().first)].visited == false &&     //If target cell is not visited
-        (level[(backtrackStack.top().second)][(backtrackStack.top().first)].top == true &&              //Doble check:
-         level[(backtrackStack.top().second - 2)][(backtrackStack.top().first)].bottom == true)))       //If next cell is not blocked
+
+    int axisX = backtrackStack.top().first;
+    int axisY = backtrackStack.top().second;
+
+    //North
+    if((axisY > 1) && 
+        (level[axisX][(axisY - 2)].visited == false &&      //If target cell is not visited
+        (level[axisX][axisY].top == true &&                 //Doble check:
+         level[axisX][(axisY - 2)].bottom == true)))        //If next cell is not blocked
     {
         neighbours.push_back(0);
     }
 
-    if((backtrackStack.top().first < n - 2) && 
-        (level[(backtrackStack.top().second)][(backtrackStack.top().first + 2)].visited == false &&
-        (level[(backtrackStack.top().second)][(backtrackStack.top().first)].right == true && 
-         level[(backtrackStack.top().second)][(backtrackStack.top().first + 2)].left == true)))
+    if((axisX < n - 2) && 
+        (level[(axisX + 2)][axisY].visited == false &&
+        (level[axisX][axisY].right == true && 
+         level[(axisX + 2)][axisY].left == true)))
     {
         neighbours.push_back(1);
     }
 
-    if((backtrackStack.top().second < n - 2) && 
-        (level[(backtrackStack.top().second + 2)][(backtrackStack.top().first)].visited == false &&
-        (level[(backtrackStack.top().second)][(backtrackStack.top().first)].bottom == true && 
-         level[(backtrackStack.top().second + 2)][(backtrackStack.top().first)].top == true)))
+    if((axisY < n - 2) && 
+        (level[axisX][(axisY + 2)].visited == false &&
+        (level[axisX][axisY].bottom == true && 
+         level[axisX][(axisY + 2)].top == true)))
     {
         neighbours.push_back(2);
     }
 
-    if((backtrackStack.top().first > 1) && 
-        (level[(backtrackStack.top().second)][(backtrackStack.top().first - 2)].visited == false &&
-        (level[(backtrackStack.top().second)][(backtrackStack.top().first)].left == true && 
-         level[(backtrackStack.top().second)][(backtrackStack.top().first + 2)].right == true)))
+    if((axisX > 1) && 
+        (level[(axisX - 2)][axisY].visited == false &&
+        (level[axisX][axisY].left == true && 
+         level[(axisX - 2)][axisY].right == true)))
     {
         neighbours.push_back(3);
     }
@@ -111,36 +116,38 @@ vector<int> checkNeighbours(Cell level[n][n], stack<pair<int, int>> &backtrackSt
 
 void moveCell(Cell level[n][n], stack<pair<int, int>> &backtrackStack, int x, int y, int direction)
 {
+    int axisX = backtrackStack.top().first;
+    int axisY = backtrackStack.top().second;
+
     //Add offsets using X and Y
-    level[(backtrackStack.top().second + x)][(backtrackStack.top().first + y)].character = ' ';
-    level[(backtrackStack.top().second + x)][(backtrackStack.top().first + y)].visited = true;
+    level[(axisX + x)][(axisY + y)].character = ' ';
+    level[(axisX + x)][(axisY + y)].visited = true;
 
     //Move 2 cells
-    level[(backtrackStack.top().second + (x*2))][(backtrackStack.top().first + (y*2))].visited = true;
-    level[(backtrackStack.top().second + (x*2))][(backtrackStack.top().first + (y*2))].character = ' ';
+    level[(axisX + (x*2))][(axisY + (y*2))].visited = true;
+    level[(axisX + (x*2))][(axisY + (y*2))].character = ' ';
 
     //Mark cells so I cant walk in there again
     switch (direction)
     {
         case 0: //North
-            level[(backtrackStack.top().second)][(backtrackStack.top().first)].top = false;
-            level[(backtrackStack.top().second + (x*2))][(backtrackStack.top().first)].bottom = false;
+            level[axisX][axisY].top = false;
+            level[axisX][axisY + (y*2)].bottom = false;
             break;
         case 1: //East
-            level[(backtrackStack.top().second)][(backtrackStack.top().first)].right = false;
-            level[(backtrackStack.top().second)][(backtrackStack.top().first + (y*2))].left = false;
+            level[axisX][axisY].right = false;
+            level[axisX + (x*2)][axisY].left = false;
             break;
         case 2: //South
-            level[(backtrackStack.top().second)][(backtrackStack.top().first)].bottom = false;
-            level[(backtrackStack.top().second + (x*2))][(backtrackStack.top().first)].top = false;
+            level[axisX][axisY].bottom = false;
+            level[axisX][axisY + (y*2)].top = false;
             break;
         case 3: //West
-            level[(backtrackStack.top().second)][(backtrackStack.top().first)].left = false;
-            level[(backtrackStack.top().second)][(backtrackStack.top().first + (y*2))].right = false;
+            level[axisX][axisY].left = false;
+            level[axisX + (x*2)][axisY].right = false;
             break;
     }
-
-    backtrackStack.push(make_pair((backtrackStack.top().first + (y*2)), (backtrackStack.top().second + (x*2))));
+    backtrackStack.push(make_pair((axisX + (x*2)), (axisY + (y*2))));
 }
 
 void createMaze2D()
@@ -174,16 +181,16 @@ void createMaze2D()
             switch (nextDir)
             {
                 case 0: //North
-                    moveCell(level, backtrackStack, -1, 0, nextDir);
+                    moveCell(level, backtrackStack, 0, -1, nextDir);
                     break;
                 case 1: //East
-                    moveCell(level, backtrackStack, 0, 1, nextDir);
-                    break;
-                case 2: //South
                     moveCell(level, backtrackStack, 1, 0, nextDir);
                     break;
+                case 2: //South
+                    moveCell(level, backtrackStack, 0, 1, nextDir);
+                    break;
                 case 3: //West
-                    moveCell(level, backtrackStack, 0, -1, nextDir);
+                    moveCell(level, backtrackStack, -1, 0, nextDir);
                     break;
             }
             visitedCells++;
@@ -200,10 +207,10 @@ void createMaze2D()
         }
 
         //Show step by step
-        //showMaze(level);
+        showMaze(level);
     }        
     //Exit point (A)
-    level[(maxLengthStack.top().second)][(maxLengthStack.top().first)].character = 'B';
+    level[(maxLengthStack.top().first)][(maxLengthStack.top().second)].character = 'B';
             
     //Show result
     showMaze(level);

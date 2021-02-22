@@ -66,7 +66,7 @@ map<char, size_t> CompareAndCount(string msgBackup)
     // Print the letter and his frecuency.
     /*for (auto pair : _map)
         if (pair.second > 0)
-            std::cout << '\'' << pair.first << "\'\t" << pair.second << std::endl;*/
+            cout << '\'' << pair.first << "\'\t" << pair.second << endl;*/
 
     return _map;
 }
@@ -99,34 +99,8 @@ string Replace(string message, set<pair<char, size_t>, comp> set, string freqLan
         {
             if(ch == pair.first)
             {
-                //Reduce check only to LowerCase
-                if(isupper(ch)) 
-                {
-                    msgIndex++;
-                    continue;
-                }
-
                 message[msgIndex] = tolower(freqLang[replaceIndex]);
             }
-            msgIndex++;
-        }
-        msgIndex = 0;
-        replaceIndex++;
-    }
-
-    //Do the same for uppercase
-    replaceIndex = 0;
-    for (auto const &pair: set) 
-    {
-        for (auto ch : msgBackup) 
-        {
-            //Reduce check only to Uppercase
-            if(!isupper(ch)) 
-            {
-                msgIndex++;
-                continue;
-            }
-
             if(ch == toupper(pair.first))
             {
                 message[msgIndex] = freqLang[replaceIndex];
